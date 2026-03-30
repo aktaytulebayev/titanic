@@ -1,6 +1,6 @@
 import streamlit as st
 import joblib
-import numpy as np
+import pandas as pd
 
 # Загружаем модель
 model = joblib.load("model.joblib")
@@ -14,12 +14,15 @@ sex = st.selectbox("Пол", ["Мужчина", "Женщина"])
 age = st.slider("Возраст", 1, 80)
 fare = st.number_input("Стоимость билета", 0.0, 500.0)
 
+# Преобразуем пол в числовой формат
 sex = 0 if sex == "Мужчина" else 1
+
+# Создаём DataFrame для модели
+input_data = pd.DataFrame([[pclass, sex, age, fare]], columns=["Pclass","Sex","Age","Fare"])
 
 # Кнопка предсказания
 if st.button("Предсказать"):
-    data = np.array([[pclass, sex, age, fare]])
-    prediction = model.predict(data)
+    prediction = model.predict(input_data)
     if prediction[0] == 1:
         st.success("✅ Пассажир выживет")
     else:
